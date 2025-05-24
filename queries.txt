@@ -1,0 +1,157 @@
+12.
+
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT DISTINCT ?conceito ?nomeConceito WHERE {
+  ?mestre a :Mestre ;
+          :nome "Aristóteles" ;
+          :ensina ?disciplina .
+  
+  ?conceito a :Conceito ;
+            :eEstudadoEm ?disciplina ;
+            :nome ?nomeConceito .
+}
+
+
+13.
+
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?obra ?titulo WHERE {
+  ?conceito rdf:type :Conceito ;
+            :nome "Relatividade" .
+  ?obra rdf:type :Obra ;
+        :explica ?conceito ;
+        :titulo ?titulo .
+}
+
+14.
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?nome {
+    {
+        ?disciplina a :Disciplina .
+        ?disciplina :pertenceA :Ciências_Sociais .
+        ?disciplina :nome ?nome
+    } UNION 
+    {
+        ?conceito :nome "Ciências Sociais" .
+        ?conceito :eEstudadoEm ?disciplina .
+        ?disciplina :nome ?nome .
+    }
+}
+
+
+15.
+
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?aplicacao ?nomeAplicacao WHERE {
+  ?conceito rdf:type :Conceito ;
+            :nome "Lógica Formal" ;
+            :temAplicacaoEm ?aplicacao .
+  ?aplicacao rdf:type :Aplicacao ;
+             :nome ?nomeAplicacao .
+}
+
+
+16.
+
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?nome {
+    ?disciplina :pertenceA :Ciências_Exatas ;
+                :nome ?nome .
+}
+
+17.
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?nome {
+    ?mestre :viveuEm :Século_XIX ;
+                :nome ?nome .
+}
+
+18.
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?aprendiz {
+    ?aprendiz a :Aprendiz ;
+              :aprende ?d .
+    ?d :nome "Programação" .
+}
+
+
+19.
+
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+
+SELECT ?disciplina (COUNT(?aprendiz) AS ?numAprendizes)
+WHERE {
+  ?aprendiz a :Aprendiz .
+  ?aprendiz :aprende ?disciplina .
+}
+GROUP BY ?disciplina
+
+
+20.
+
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+
+SELECT ?periodo (COUNT(?conceito) AS ?numConceitos)
+WHERE {
+  ?conceito a :Conceito .
+  ?conceito :surgeEm ?periodo .
+}
+GROUP BY ?periodo
+
+
+21.
+
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+
+SELECT ?conceito (GROUP_CONCAT(?titulo; separator=", ") AS ?titulosObras)
+WHERE {
+  ?obra a :Obra .
+  ?obra :explica ?conceito .
+  ?obra :titulo ?titulo .
+}
+GROUP BY ?conceito
+
+
+22.
+
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+
+SELECT ?disciplina (GROUP_CONCAT(?nomeAprendiz; separator=", ") AS ?listaAprendizes)
+WHERE {
+  ?aprendiz a :Aprendiz .
+  ?aprendiz :aprende ?disciplina .
+  ?aprendiz :nome ?nomeAprendiz .
+}
+GROUP BY ?disciplina
+
+
+23.
+PREFIX : <http://www.semanticweb.org/jeswi/ontologies/2025/untitled-ontology-39#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?escalao (COUNT(?aprendiz) AS ?numeroDeAprendizes)
+WHERE {
+  ?aprendiz :idade ?idade .
+  BIND(
+    IF(?idade >= 17 && ?idade <= 34, "[17, 34]",
+    IF(?idade >= 35 && ?idade <= 44, "[35, 44]",
+    IF(?idade >= 45 && ?idade <= 54, "[45, 54]",
+    IF(?idade >= 55 && ?idade <= 64, "[55, 64]",
+    IF(?idade >= 65 && ?idade <= 74, "[65, 74]",
+    IF(?idade >= 75 && ?idade <= 100, "[75, 100]", "Fora do Escalão")))))) AS ?escalao)
+}
+GROUP BY ?escalao
