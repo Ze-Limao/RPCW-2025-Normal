@@ -27,6 +27,19 @@ WHERE {
 }
 """
 
+
+# Query insert
+"""
+INSERT {
+  ?aprendiz :estudaCom ?mestre .
+}
+WHERE {
+  ?aprendiz :aprende ?disciplina .
+  ?mestre :ensina ?disciplina .
+}
+"""
+
+
 def executar_construct():
     print("Executando CONSTRUCT para obter novos triplos...")
     response = requests.get(QUERY_ENDPOINT, params={"query": construct_query}, headers=HEADERS_QUERY)
